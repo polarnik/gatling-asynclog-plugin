@@ -19,8 +19,8 @@
 #### Старт, начать отчет времени
 
 ```scala
-asyncLog(transactionID: Expression[String]).start(transactionLabel: Expression[String])
-asyncLog(transactionID: Expression[String]).start(transactionLabel: Expression[String], maxDuration: Expression[Int])
+asyncLog(transactionID: Expression[String]).start(requestName: Expression[String])
+asyncLog(transactionID: Expression[String]).start(requestName: Expression[String], maxDuration: Expression[Int])
 ```
 
 При старте транзкации можно указать сразу имя транзакции.
@@ -41,7 +41,7 @@ asyncLog(transactionID: Expression[String]).id(newTransactionID: Expression[Stri
 
 ```scala
 asyncLog(transactionID: Expression[String]).log()
-asyncLog(transactionID: Expression[String]).log(transactionLabel: Expression[String])
+asyncLog(transactionID: Expression[String]).log(requestName: Expression[String])
 
 ```
 
