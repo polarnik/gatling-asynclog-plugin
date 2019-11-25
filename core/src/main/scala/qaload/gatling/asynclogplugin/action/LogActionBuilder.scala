@@ -1,18 +1,8 @@
 package qaload.gatling.asynclogplugin.action
 
-import java.util.TimeZone
-
-import io.gatling.commons.stats.Status
 import io.gatling.core.action.Action
 import io.gatling.core.action.builder.ActionBuilder
-import io.gatling.core.session.Expression
 import io.gatling.core.structure.ScenarioContext
-import qaload.gatling.asynclogplugin.request.AsynclogAttributes
-import ru.raiffeisen.asynclog.request.LogDslBuilder
-
-import java.text.SimpleDateFormat
-import java.util.TimeZone
-
 import com.softwaremill.quicklens._
 import io.gatling.commons.stats.Status
 import io.gatling.core.session.{Expression, _}

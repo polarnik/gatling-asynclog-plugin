@@ -3,19 +3,16 @@ package qaload.gatling.asynclogplugin.action
 import java.text.SimpleDateFormat
 import java.util.TimeZone
 
+import io.gatling.commons.stats.{OK, Status}
+import io.gatling.commons.validation.{Failure, Success}
 import io.gatling.core.Predef.Session
-import io.gatling.core.action.ChainableAction
+import io.gatling.core.action._
+import io.gatling.core.session.Expression
 import io.gatling.core.stats.StatsEngine
 import io.gatling.core.util.NameGen
 import qaload.gatling.asynclogplugin.request.AsynclogAttributes
-import io.gatling.core.session.{Expression, _}
-import io.gatling.core.action._
-import io.gatling.commons.stats.{KO, OK, Status}
-import io.gatling.commons.util.Clock
-import io.gatling.commons.validation.{Failure, Success}
-import io.gatling.core.controller.throttle.Throttler
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 case class LogAction(
