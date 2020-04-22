@@ -5,7 +5,89 @@
 Плагин для логирования операций в Gatling 3.2.1.
 Поддерживает логирование, в том числе, и операций, которые начались в одном сценарии, а завершились в другом сценарии.
 
-## Методы для замера длительности работы
+## Методы для ручного создания событий (готово)
+
+Пример вызова есть в example/src/test/scala/qaload/BasicSimulation.scala
+
+Для создания события нужно заполнить:
+
+* имя запроса (обязательно)
+* момент старта (обязательно)
+* момент завершения (обязательно)
+* статус (по умолчанию OK)
+* код ответа (по умолчанию 200, но код ответа не попадает в статистику Gatling Open Source)
+* сообщение (по умолчанию пустое)
+
+Момент старта и момент завершения можно заполнять с помощью разных типов:
+
+* long или scala.Long (`System.currentTimeMillis`)
+* java.util.Date (`java.util.Calendar.getInstance().getTime()`)
+* java.lang.String или scala.String (строка с датой, временем, с точностью и миллитекунд и часовым поясом в любом формате)
+
+Передавать можно как значения с указанными типами, так и Expression.
+
+Для трёх типов есть три вида методов:
+
+1. startTimestamp(Long start), endTimestamp(Long stop)
+2. startDate(Date startDate), endDate(Date endDate)
+3. startTimestamp(String startDateString, String dateFormat), stopTimestamp(String stopDateString, String dateFormat)
+
+К каждому событию можно применить их все. Сделано для простоты реализации. И если одновременно применять методы, 
+то значения будут использоваться по мере уменьшения приоритета:
+
+* 1 - применится значение 1 (`startTimestamp(Long start)`)
+* 2 - применится значение 2 (`startDate(Date startDate)`)
+* 3 - применится значение 3 (`startDate(Date startDate)`)
+* 1 и 2 - применится только 1 (`startTimestamp(Long start)`)
+* 1 и 3 - применится только 1 (`startTimestamp(Long start)`)
+* 1, 2 и 3 - применится значение 1 (`startTimestamp(Long start)`)
+* 2 и 3  - применится значение 2 (`startDate(Date startDate)`)
+
+Аналогично и для момента завершения.
+
+Пример:
+
+    .exec(asynclog
+      .requestName("Generate request")
+      .startTimestamp("2020-04-22 20:53:28.546 MSK", "yyyy-MM-dd HH:mm:ss.SSS zzz")
+      .endTimestamp("2020-04-22 20:53:29.069 MSK", "yyyy-MM-dd HH:mm:ss.SSS zzz")
+      .status(io.gatling.commons.stats.OK)
+      .responseCode("200")
+      .message("All correct")
+    )
+
+Пример с передачей параметров, через параметры сессии Gatling:
+
+
+    val scn = scenario("Scenario Name") // A scenario is a chain of requests and pauses
+    .exec {
+      session =>
+        val now = System.currentTimeMillis;
+      session
+          .set("start", now)
+    }
+    .exec(
+      http("/ (GET)").get("/")
+    )
+    .exec(
+      http("/mainPage.php (GET)").get("/mainPage.php")
+    )    
+    .exec(
+      http("/finalPage.php (GET)").get("/finalPage.php")
+    )    
+    .exec {
+      session =>
+        val now = System.currentTimeMillis;
+        session
+          .set("stop", now)
+    }
+    .exec(asynclog
+      .requestName("Group of three requests")
+      .startTimestamp("${start}")
+      .endTimestamp("${stop}")
+    )
+
+## Методы для замера длительности работы (TODO, проект)
 
 
 ### Доступные действия

@@ -33,7 +33,13 @@ class BasicSimulation extends Simulation {
           .set("startDateString", nowString)
     }
     .exec(
-      http("/ (GET)").get("/")
+      http("/?1 (GET)").get("/?1")
+    )
+    .exec(
+      http("/?2 (GET)").get("/?2")
+    )
+    .exec(
+      http("/?3 (GET)").get("/?3")
     )
     .exec {
       session =>
@@ -46,17 +52,10 @@ class BasicSimulation extends Simulation {
           .set("stopDate", nowDate)
           .set("stopDateString", nowString)
     }
-    .exec {
-      session =>
-        session
-    }
     .exec(asynclog
       .requestName("Generate req 1")
       .startTimestamp("${start}")
       .endTimestamp("${stop}")
-      .status(io.gatling.commons.stats.OK)
-      .responseCode("200")
-      .message("startTimestamp(System.currentTimeMillis), endTimestamp(System.currentTimeMillis)")
     )
     .exec(asynclog
       .requestName("Generate req 2")
@@ -70,9 +69,6 @@ class BasicSimulation extends Simulation {
       .requestName("Generate req 3")
       .startDate("${startDate}")
       .endDate("${stopDate}")
-      .status(io.gatling.commons.stats.OK)
-      .responseCode("200")
-      .message("startDate(java.util.Date), endDate(java.util.Date) [${startDate}, ${stopDate}]")
     )
     .exec(asynclog
       .requestName("Generate req 4")
@@ -90,5 +86,12 @@ class BasicSimulation extends Simulation {
       .responseCode("201")
       .message("startTimestamp(System.currentTimeMillis), endTimestamp(String, Format) [${start}, ${stopDateString}]")
     )
-  setUp(scn.inject(atOnceUsers(1)).protocols(httpProtocol))
+
+  setUp(
+    scn.inject(
+      atOnceUsers(1),
+      atOnceUsers(2),
+      atOnceUsers(3),
+      atOnceUsers(4)
+    ).protocols(httpProtocol))
 }
