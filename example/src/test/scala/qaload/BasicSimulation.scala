@@ -24,7 +24,7 @@ class BasicSimulation extends Simulation {
     .exec {
       session =>
         val now = Calendar.getInstance().getTime()
-        val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
         val start = dateFormat.format(now)
       session
           .set("startTime", start)
@@ -35,7 +35,7 @@ class BasicSimulation extends Simulation {
     .exec {
       session =>
         val now = Calendar.getInstance().getTime()
-        val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
         val stop = dateFormat.format(now)
         session
           .set("stopTime", stop)
@@ -45,15 +45,15 @@ class BasicSimulation extends Simulation {
         session
     }
     .exec(asynclog("Generate req 1")
-      .startTimestamp("${startTime}", "yyyy-MM-dd HH:mm:ss")
-        .endTimestamp("${stopTime}", "yyyy-MM-dd HH:mm:ss")
+      .startTimestamp("${startTime}", "yyyy-MM-dd HH:mm:ss.SSS")
+        .endTimestamp("${stopTime}", "yyyy-MM-dd HH:mm:ss.SSS")
         .status(io.gatling.commons.stats.OK)
         .responseCode("200")
     )
     .exec(asynclog
       .requestName("Generate req 2")
-      .startTimestamp("${startTime}", "yyyy-MM-dd HH:mm:ss")
-      .endTimestamp("${stopTime}", "yyyy-MM-dd HH:mm:ss")
+      .startTimestamp("${startTime}", "yyyy-MM-dd HH:mm:ss.SSS")
+      .endTimestamp("${stopTime}", "yyyy-MM-dd HH:mm:ss.SSS")
       .status(io.gatling.commons.stats.OK)
       .responseCode("200")
     )
