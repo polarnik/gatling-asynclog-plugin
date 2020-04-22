@@ -9,10 +9,12 @@ case class AsynclogAttributes(
                                requestName: Expression[String],
 
                                startTimestamp: Option[Expression[Long]],
+                               startTimestampDate: Option[Expression[java.util.Date]],
                                startTimestampString: Option[Expression[String]],
                                startTimestampStringFormat: Option[Expression[String]],
 
                                endTimestamp: Option[Expression[Long]],
+                               endTimestampDate: Option[Expression[java.util.Date]],
                                endTimestampString: Option[Expression[String]],
                                endTimestampStringFormat: Option[Expression[String]],
 
@@ -29,10 +31,12 @@ object AsynclogAttributes {
       requestName = "".expressionSuccess,
 
       startTimestamp = None,
+      startTimestampDate = None,
       startTimestampString = None,
       startTimestampStringFormat = None,
 
       endTimestamp = None,
+      endTimestampDate = None,
       endTimestampString = None,
       endTimestampStringFormat = None,
 
@@ -50,10 +54,12 @@ object AsynclogAttributes {
       requestName = "".expressionSuccess,
 
       startTimestamp = Some(System.currentTimeMillis.expressionSuccess),
+      startTimestampDate = None,
       startTimestampString = None,
       startTimestampStringFormat = None,
 
       endTimestamp = None,
+      endTimestampDate = None,
       endTimestampString = None,
       endTimestampStringFormat = None,
 

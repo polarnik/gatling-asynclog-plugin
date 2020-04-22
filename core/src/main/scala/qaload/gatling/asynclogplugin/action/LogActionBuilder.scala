@@ -19,6 +19,9 @@ case class LogActionBuilder (
   def startTimestamp(startTimestamp: Expression[Long]) =
     this.modify(_.attributes.startTimestamp).setTo(Some(startTimestamp))
 
+  def startDate(startDate: Expression[java.util.Date]) =
+    this.modify(_.attributes.startTimestampDate).setTo(Some(startDate))
+
   def startTimestamp(startTime: Expression[String], format: Expression[String]) =
     this
       .modify(_.attributes.startTimestampString).setTo(Some(startTime))
@@ -27,6 +30,9 @@ case class LogActionBuilder (
 
   def endTimestamp(endTimestamp: Expression[Long]) =
     this.modify(_.attributes.endTimestamp).setTo(Some(endTimestamp))
+
+  def endDate(endDate: Expression[java.util.Date]) =
+    this.modify(_.attributes.endTimestampDate).setTo(Some(endDate))
 
   def endTimestamp(endTime: Expression[String], format: Expression[String]) =
     this

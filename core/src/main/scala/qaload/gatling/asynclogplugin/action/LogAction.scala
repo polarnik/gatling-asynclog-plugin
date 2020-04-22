@@ -66,6 +66,7 @@ case class LogAction(
   def getTime(
                session: Session,
                timeStamp: Option[Expression[Long]],
+               timeStampDate: Option[Expression[java.util.Date]],
                timestampString: Option[Expression[String]],
                timestampStringFormat: Option[Expression[String]]
              ): scala.Long =
@@ -75,25 +76,31 @@ case class LogAction(
         case Success(resolvedTimeStamp) => resolvedTimeStamp
         case Failure(msg) => throw new RuntimeException(msg)
       }
-      case None => (timestampString, timestampStringFormat) match {
-        case (Some(timestampStringExpresstion), Some(timestampStringFormatExpression)) => {
-          (timestampStringExpresstion(session), timestampStringFormatExpression(session)) match {
-            case (Success(resolvedTimestampString), Success(resolvedTimestampStringFormat)) =>
-              getTimeStamp(resolvedTimestampString, resolvedTimestampStringFormat)
-            case (Failure(msg), Success(resolvedTimestampStringFormat)) =>
-              throw new RuntimeException(msg)
-            case (Success(resolvedTimestampString), Failure(msg)) =>
-              throw new RuntimeException(msg)
-            case (Failure(msg), Failure(msg2)) =>
-              throw new RuntimeException(msg + " " + msg2)
-          }
+      case None => timeStampDate match {
+        case Some(timeStampDateExpression) => timeStampDateExpression(session) match {
+          case Success(resolvedTimeStampDate) => resolvedTimeStampDate.getTime
+          case Failure(msg) => throw new RuntimeException(msg)
         }
-        case (Some(timestampStringExpresstion), None) =>
-          throw new RuntimeException("1")
-        case (None, Some(timestampStringExpresstion)) =>
-          throw new RuntimeException("2")
-        case (None, None) =>
-          throw new RuntimeException("3")
+        case None => (timestampString, timestampStringFormat) match {
+          case (Some(timestampStringExpresstion), Some(timestampStringFormatExpression)) => {
+            (timestampStringExpresstion(session), timestampStringFormatExpression(session)) match {
+              case (Success(resolvedTimestampString), Success(resolvedTimestampStringFormat)) =>
+                getTimeStamp(resolvedTimestampString, resolvedTimestampStringFormat)
+              case (Failure(msg), Success(resolvedTimestampStringFormat)) =>
+                throw new RuntimeException(msg)
+              case (Success(resolvedTimestampString), Failure(msg)) =>
+                throw new RuntimeException(msg)
+              case (Failure(msg), Failure(msg2)) =>
+                throw new RuntimeException(msg + " " + msg2)
+            }
+          }
+          case (Some(timestampStringExpresstion), None) =>
+            throw new RuntimeException("1")
+          case (None, Some(timestampStringExpresstion)) =>
+            throw new RuntimeException("2")
+          case (None, None) =>
+            throw new RuntimeException("3")
+        }
       }
     }
   }
@@ -107,12 +114,14 @@ case class LogAction(
       val resolvedStartTimestamp = getTime(
         session,
         attributes.startTimestamp,
+        attributes.startTimestampDate,
         attributes.startTimestampString,
         attributes.startTimestampStringFormat
       )
       val resolvedEndTimestamp = getTime(
         session,
         attributes.endTimestamp,
+        attributes.endTimestampDate,
         attributes.endTimestampString,
         attributes.endTimestampStringFormat
       )

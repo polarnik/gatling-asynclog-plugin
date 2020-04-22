@@ -23,40 +23,72 @@ class BasicSimulation extends Simulation {
   val scn = scenario("Scenario Name") // A scenario is a chain of requests and pauses
     .exec {
       session =>
-        val now = Calendar.getInstance().getTime()
-        val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
-        val start = dateFormat.format(now)
+        val now = System.currentTimeMillis;
+        val nowDate = Calendar.getInstance().getTime()
+        val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS zzz")
+        val nowString = dateFormat.format(nowDate)
       session
-          .set("startTime", start)
+          .set("start", now)
+          .set("startDate", nowDate)
+          .set("startDateString", nowString)
     }
     .exec(
       http("/ (GET)").get("/")
     )
     .exec {
       session =>
-        val now = Calendar.getInstance().getTime()
-        val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
-        val stop = dateFormat.format(now)
+        val now = System.currentTimeMillis;
+        val nowDate = Calendar.getInstance().getTime()
+        val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS zzz")
+        val nowString = dateFormat.format(nowDate)
         session
-          .set("stopTime", stop)
+          .set("stop", now)
+          .set("stopDate", nowDate)
+          .set("stopDateString", nowString)
     }
     .exec {
       session =>
         session
     }
-    .exec(asynclog("Generate req 1")
-      .startTimestamp("${startTime}", "yyyy-MM-dd HH:mm:ss.SSS")
-        .endTimestamp("${stopTime}", "yyyy-MM-dd HH:mm:ss.SSS")
-        .status(io.gatling.commons.stats.OK)
-        .responseCode("200")
+    .exec(asynclog
+      .requestName("Generate req 1")
+      .startTimestamp("${start}")
+      .endTimestamp("${stop}")
+      .status(io.gatling.commons.stats.OK)
+      .responseCode("200")
+      .message("startTimestamp(System.currentTimeMillis), endTimestamp(System.currentTimeMillis)")
     )
     .exec(asynclog
       .requestName("Generate req 2")
-      .startTimestamp("${startTime}", "yyyy-MM-dd HH:mm:ss.SSS")
-      .endTimestamp("${stopTime}", "yyyy-MM-dd HH:mm:ss.SSS")
+      .startTimestamp("${start}")
+      .endTimestamp("${stop}")
+      .status(io.gatling.commons.stats.KO)
+      .responseCode("500")
+      .message("500 Error Message")
+    )
+    .exec(asynclog
+      .requestName("Generate req 3")
+      .startDate("${startDate}")
+      .endDate("${stopDate}")
       .status(io.gatling.commons.stats.OK)
       .responseCode("200")
+      .message("startDate(java.util.Date), endDate(java.util.Date) [${startDate}, ${stopDate}]")
     )
-
+    .exec(asynclog
+      .requestName("Generate req 4")
+      .startTimestamp("${startDateString}", "yyyy-MM-dd HH:mm:ss.SSS zzz")
+      .endTimestamp("${stopDateString}", "yyyy-MM-dd HH:mm:ss.SSS zzz")
+      .status(io.gatling.commons.stats.OK)
+      .responseCode("200")
+      .message("startTimestamp(String, Format), endTimestamp(String, Format) [${startDateString}, ${stopDateString}]")
+    )
+    .exec(asynclog
+      .requestName("Generate req 5")
+      .startTimestamp("${start}")
+      .endTimestamp("${stopDateString}", "yyyy-MM-dd HH:mm:ss.SSS zzz")
+      .status(io.gatling.commons.stats.OK)
+      .responseCode("201")
+      .message("startTimestamp(System.currentTimeMillis), endTimestamp(String, Format) [${start}, ${stopDateString}]")
+    )
   setUp(scn.inject(atOnceUsers(1)).protocols(httpProtocol))
 }
