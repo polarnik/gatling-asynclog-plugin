@@ -1,12 +1,13 @@
+
 import io.gatling.app.Gatling
-import io.gatling.core.config.GatlingPropertiesBuilder
+import io.gatling.core.ConfigKeys.{core, data}
 
 object Engine extends App {
 
-  val props = new GatlingPropertiesBuilder()
-    .resourcesDirectory(IDEPathHelper.resourcesDirectory.toString)
-    .resultsDirectory(IDEPathHelper.resultsDirectory.toString)
-    .binariesDirectory(IDEPathHelper.mavenBinariesDirectory.toString)
+  val config = scala.collection.mutable.Map(
+    core.SimulationClass ->  "qaload.BasicSimulation",
+    core.RunDescription -> "open workload model"
+  )
 
-  Gatling.fromMap(props.build)
+  Gatling.fromMap(config)
 }
