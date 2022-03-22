@@ -8,9 +8,7 @@ import io.gatling.commons.stats.Status
 import io.gatling.core.session.{Expression, _}
 import qaload.gatling.asynclogplugin.request.AsynclogAttributes
 
-case class LogActionBuilder (
-                              attributes: AsynclogAttributes
-                            ) extends ActionBuilder {
+case class LogActionBuilder (attributes: AsynclogAttributes) extends ActionBuilder {
 
   def requestName(requestName: Expression[String]) =
     this.modify(_.attributes.requestName).setTo(requestName)

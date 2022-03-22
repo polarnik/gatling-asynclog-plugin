@@ -1,5 +1,5 @@
 package qaload.gatling.asynclogplugin
 
-import ru.raiffeisen.asynclog.AsynclogDsl
+import qaload.gatling.asynclogplugin.AsynclogDsl
 
 object Predef extends AsynclogDsl

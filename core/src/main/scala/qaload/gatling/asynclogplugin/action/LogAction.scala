@@ -107,10 +107,8 @@ case class LogAction(
 
   override def execute(session: Session): Unit = {
 
-    val resolvedAttributes: Future[ResolvedAttributes] =
-    Future {
+    val resolvedAttributes: Future[ResolvedAttributes] = Future {
       val resolvedRequestName = resolve(attributes.requestName, session)
-
       val resolvedStartTimestamp = getTime(
         session,
         attributes.startTimestamp,
@@ -131,32 +129,39 @@ case class LogAction(
 
       val resolvedMessage = tryResolve(attributes.message, session)
 
-      ResolvedAttributes(resolvedRequestName, resolvedStartTimestamp, resolvedEndTimestamp, resolvedStatus, resolvedResponseCode, resolvedMessage)
+      ResolvedAttributes(
+        resolvedRequestName,
+        resolvedStartTimestamp,
+        resolvedEndTimestamp,
+        resolvedStatus,
+        resolvedResponseCode,
+        resolvedMessage
+      )
     }
 
-    resolvedAttributes onComplete{
-        case scala.util.Success(attr) => {
-          println(attr)
-          next ! {
-            statsEngine.logResponse(
-              session,
-
-              attr.requestName,
-              attr.startTimestamp,
-              attr.endTimestamp,
-              attr.status,
-              attr.responseCode,
-              attr.message
-            )
-            session
-          }
+    resolvedAttributes onComplete {
+      case scala.util.Success(attr) => {
+        println(attr)
+        next ! {
+          statsEngine.logResponse(
+            session.scenario,
+            session.groups,
+            attr.requestName,
+            attr.startTimestamp,
+            attr.endTimestamp,
+            attr.status,
+            attr.responseCode,
+            attr.message
+          )
+          session
         }
-        case scala.util.Failure(t) => {
-          next ! {
-            statsEngine.logCrash(session, name, t.getMessage)
-            session.markAsFailed
-          }
+      }
+      case scala.util.Failure(t) => {
+        next ! {
+          statsEngine.logCrash(session.scenario, session.groups, name, t.getMessage)
+          session.markAsFailed
         }
+      }
     }
   }
 }

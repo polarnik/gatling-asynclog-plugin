@@ -19,6 +19,7 @@ class BasicSimulation extends Simulation {
     .acceptEncodingHeader("gzip, deflate")
     .acceptLanguageHeader("en-US,en;q=0.5")
     .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:16.0) Gecko/20100101 Firefox/16.0")
+    .disableWarmUp
 
   val scn = scenario("Scenario Name") // A scenario is a chain of requests and pauses
     .exec {
@@ -27,7 +28,8 @@ class BasicSimulation extends Simulation {
         val nowDate = Calendar.getInstance().getTime()
         val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS zzz")
         val nowString = dateFormat.format(nowDate)
-      session
+
+        session
           .set("start", now)
           .set("startDate", nowDate)
           .set("startDateString", nowString)

@@ -1,4 +1,4 @@
-package ru.raiffeisen.asynclog
+package qaload.gatling.asynclogplugin
 
 import io.gatling.core.session.Expression
 import qaload.gatling.asynclogplugin.action.{LogActionBuilder}
